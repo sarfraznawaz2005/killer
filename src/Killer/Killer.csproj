@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\killer.ico</ApplicationIcon>
+    <StartupObject>Killer.App</StartupObject>
+    <!-- DPI awareness is set via app.manifest, which is correct for a WPF app; the WinForms
+         analyzer doesn't know that and suggests a WinForms-only API instead. -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF's own Application/MessageBox/Button/etc. should win by default; Forms types are referenced fully-qualified where used (tray icon). -->
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\killer.ico" />
+  </ItemGroup>
+
+</Project>
