@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using Killer.Models;
 using Killer.Services;
@@ -160,12 +161,22 @@ public partial class App : Application
 
         if (Settings.ShowNotificationOnKill)
         {
-            var message = outcome.TotalKilled == 0
-                ? "Nothing on your list was running."
-                : $"Killed {outcome.TotalKilled} process(es).";
+            string message;
+            if (outcome.TotalKilled == 0)
+            {
+                message = "Nothing on your list was running.";
+            }
+            else
+            {
+                var killedNames = outcome.KilledProcessNames.Concat(outcome.ElevatedProcessNames);
+                message = $"Killed {outcome.TotalKilled} process(es):\n" +
+                    string.Join("\n", killedNames.Select(name => $"- {name}"));
+            }
+
             if (outcome.StillRunningNames.Count > 0)
             {
-                message += $" {outcome.StillRunningNames.Count} could not be killed.";
+                message += $"\n{outcome.StillRunningNames.Count} could not be killed:\n" +
+                    string.Join("\n", outcome.StillRunningNames.Select(name => $"- {name}"));
             }
 
             ShowBalloon("Killer", message);
