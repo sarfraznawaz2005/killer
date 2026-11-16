@@ -164,6 +164,15 @@ public partial class MainWindow : Window
         }
     }
 
+    private void KillProcessButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: ProcessTarget target })
+        {
+            OnKillPerformed(_app.KillerService.KillAll([target.Name]));
+            RefreshRunningStatus();
+        }
+    }
+
     private void RemoveProcessButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { Tag: ProcessTarget target })

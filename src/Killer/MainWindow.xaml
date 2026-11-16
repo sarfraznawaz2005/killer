@@ -60,13 +60,13 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="Process name" Width="250" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="Status" Width="80">
+                                <GridViewColumn Header="Process name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Status" Width="130">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="Running" Foreground="#2E9E5B" FontWeight="SemiBold">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
+                                            <StackPanel Orientation="Horizontal">
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
                                                         <Setter Property="Visibility" Value="Collapsed"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsRunning}" Value="True">
@@ -74,8 +74,12 @@
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
+                                                </StackPanel.Style>
+                                                <TextBlock Text="Running" Foreground="#2E9E5B" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                <Button Content="Kill" Style="{StaticResource FlatButton}" Padding="8,4"
+                                                        Click="KillProcessButton_Click" Tag="{Binding}"/>
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
