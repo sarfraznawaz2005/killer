@@ -111,6 +111,6 @@ public class ProcessKillerService
         }
     }
 
-    private static string StripExeExtension(string name) =>
+    internal static string StripExeExtension(string name) =>
         name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? name[..^4] : name;
 }

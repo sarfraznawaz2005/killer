@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Killer.Models;
 using Killer.Services;
 using Microsoft.Win32;
@@ -45,6 +47,22 @@ public partial class MainWindow : Window
 
         ProcessListView.ItemsSource = _app.Settings.Processes;
 
+        var statusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+        statusTimer.Tick += (_, _) => RefreshRunningStatus();
+        IsVisibleChanged += (_, _) =>
+        {
+            if (IsVisible)
+            {
+                RefreshRunningStatus();
+                statusTimer.Start();
+            }
+            else
+            {
+                statusTimer.Stop();
+            }
+        };
+        _app.Settings.Processes.CollectionChanged += (_, _) => RefreshRunningStatus();
+
         StartWithWindowsCheck.IsChecked = _app.Settings.StartWithWindows;
         HotkeyEnabledCheck.IsChecked = _app.Settings.HotkeyEnabled;
         ShowNotificationCheck.IsChecked = _app.Settings.ShowNotificationOnKill;
@@ -63,6 +81,21 @@ public partial class MainWindow : Window
         var workArea = SystemParameters.WorkArea;
         Left = workArea.Left + (workArea.Width - Width) / 2;
         Top = workArea.Top + (workArea.Height - Height) / 2;
+    }
+
+    private void RefreshRunningStatus()
+    {
+        var running = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var process in Process.GetProcesses())
+        {
+            running.Add(process.ProcessName);
+            process.Dispose();
+        }
+
+        foreach (var target in _app.Settings.Processes)
+        {
+            target.IsRunning = running.Contains(ProcessKillerService.StripExeExtension(target.Name));
+        }
     }
 
     private void KillNowButton_Click(object sender, RoutedEventArgs e) => _app.PerformKill();
